@@ -59,7 +59,7 @@ public class PostsServiceTest {
 
         Post post2 = Post.builder()
                 .id(2)
-                .text("Something lol1234")
+                .text("Something lol124")
                 .build();
 
         List<Post> postsList = Arrays.asList(post1, post2);
