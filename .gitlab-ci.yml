@@ -1,0 +1,36 @@
+# Disable the Gradle daemon for Continuous Integration servers as correctness 
+# is usually a priority over speed in CI environments. Using a fresh 
+# runtime for each build is more reliable since the runtime is completely 
+# isolated from any previous buils. 
+stages: 
+ - build 
+ - test 
+ - sonarqube
+ - build_image
+ 
+build: 
+ stage: build 
+ script: 
+  - cd BE
+  - ./gradlew assemble
+ artifacts:
+  paths:
+    - BE/build/libs/*.jar
+   
+test: 
+  stage: test 
+  script: 
+  - cd BE
+  - ./gradlew test
+
+sonar:
+  stage: sonarqube
+  script:
+  - cd BE
+  - ./gradlew sonar
+
+build_image:
+  stage: build_image
+  script:
+    - cd BE
+    - docker build -t backend:latest .
