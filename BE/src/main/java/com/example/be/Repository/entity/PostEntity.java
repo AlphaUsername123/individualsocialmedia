@@ -1,4 +1,4 @@
-package com.example.be.Domain;
+package com.example.be.Repository.entity;
 
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
@@ -6,17 +6,13 @@ import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
-import java.time.LocalDate;
-import java.util.ArrayList;
-import java.util.List;
-
 @Data
 @AllArgsConstructor
 @Entity
 @Builder
 @NoArgsConstructor
 @Table(name="posts")
-public class Post
+public class PostEntity
 {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)

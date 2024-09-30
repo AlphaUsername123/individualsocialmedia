@@ -1,71 +1,63 @@
 package com.example.be.Controller;
 
-import com.example.be.Domain.Post;
-import com.example.be.Services.PostsService;
+import com.example.be.Business.postUseCases.*;
+import com.example.be.Domain.Posts.*;
 import jakarta.annotation.security.RolesAllowed;
+import jakarta.validation.Valid;
 import lombok.AllArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
-
-import java.util.List;
+import java.math.BigDecimal;
+import java.util.Optional;
 
 @RestController
 @AllArgsConstructor
 @CrossOrigin("http://localhost:5173")
-@RequestMapping(value = "/posts")
+@RequestMapping(value = "/Posts")
 public class PostsController {
-    private PostsService pservice;
+    private final CreatePostUseCase createPostUseCase;
+    private final UpdatePostUseCase updatePostUseCase;
+    private final GetPostUseCase getPostUseCase;
+    private final GetPostsUseCase getPostsUseCase;
+    private final DeletePostUseCase deletePostUseCase;
 
-    @GetMapping("/get")
-    public ResponseEntity<List<Post>> getAll() {
-        return ResponseEntity.ok(this.pservice.getAll());
+    @GetMapping("/getall")
+    public ResponseEntity<GetAllPostsResponse> getAll() {
+        GetAllPostsRequest request = new GetAllPostsRequest();
+        return ResponseEntity.ok(getPostsUseCase.getPosts(request));
     }
 
 
     @GetMapping("{id}")
-    public ResponseEntity<Post> getById(@PathVariable("id") int id) {
-        try {
-            return ResponseEntity.ok(this.pservice.getById(id));
-        } catch (Exception e) {
+    public ResponseEntity<Post> getPostById(@PathVariable("id") int id) {
+        final Optional<Post> PostOptional = getPostUseCase.getPost(id);
+        if (PostOptional.isEmpty()) {
             return ResponseEntity.notFound().build();
         }
+        return ResponseEntity.ok().body(PostOptional.get());
     }
 
-//    @RolesAllowed({"ADMIN"})
-    @PostMapping("/post")
-    public ResponseEntity create(@RequestBody Post newProject) {
-        try {
-            this.pservice.create(newProject);
-            return ResponseEntity.status(HttpStatus.OK).build();
-        } catch (Exception e) {
-            return ResponseEntity.notFound().build();
-        }
+    @RolesAllowed({"ADMIN"})
+    @PostMapping()
+    public ResponseEntity<CreatePostResponse> create(@RequestBody @Valid CreatePostRequest request) {
+            CreatePostResponse response = createPostUseCase.createPost(request);
+            return ResponseEntity.status(HttpStatus.CREATED).body(response);
     }
 
-//    @RolesAllowed({"ADMIN"})
-    @PutMapping("/{id}")
-    public ResponseEntity update(@PathVariable("id") int id, @RequestBody Post post) {
-        try {
-            Post existingPost = this.pservice.getById(id);
-            existingPost.setText(post.getText());
-            this.pservice.create(existingPost);
-            return ResponseEntity.status(HttpStatus.OK).build();
-        } catch (Exception e) {
-            return ResponseEntity.notFound().build();
-        }
+    @RolesAllowed({"ADMIN"})
+    @PutMapping("{id}")
+    public ResponseEntity<Post> update(@PathVariable("id") long id, @RequestBody @Valid UpdatePostRequest request) {
+        request.setId(id);
+        updatePostUseCase.updatePost(request);
+        return ResponseEntity.noContent().build();
     }
 
-//    @RolesAllowed({"ADMIN"})
-    @DeleteMapping("/{id}")
-    public ResponseEntity delete(@PathVariable("id") int id) {
-        try {
-            Post findpost = this.pservice.getById(id);
-            this.pservice.delete(findpost);
-            return ResponseEntity.status(HttpStatus.OK).build();
-        } catch (Exception e) {
-            return ResponseEntity.notFound().build();
-        }
+    @RolesAllowed({"ADMIN"})
+    @DeleteMapping("{PostId}")
+    public ResponseEntity<Void> deletePost(@PathVariable int PostId) {
+        deletePostUseCase.deletePost(PostId);
+        return ResponseEntity.noContent().build();
     }
 }
