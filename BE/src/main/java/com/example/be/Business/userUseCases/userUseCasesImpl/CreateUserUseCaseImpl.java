@@ -3,7 +3,6 @@ package com.example.be.Business.userUseCases.userUseCasesImpl;
 import com.example.be.Business.userUseCases.CreateUserUseCase;
 import com.example.be.Domain.User.CreateUserRequest;
 import com.example.be.Domain.User.CreateUserResponse;
-import com.example.be.Repository.PostsRepository;
 import com.example.be.Repository.UserRepository;
 import com.example.be.Repository.entity.RoleEnum;
 import com.example.be.Repository.entity.UserEntity;
@@ -19,8 +18,6 @@ import java.util.Set;
 @AllArgsConstructor
 public class CreateUserUseCaseImpl implements CreateUserUseCase {
     private static final String USERNAME_SUFFIX = "@fontys.nl";
-
-    private final PostsRepository postsRepository;
 
     private final UserRepository userRepository;
 
@@ -61,6 +58,6 @@ public class CreateUserUseCaseImpl implements CreateUserUseCase {
         UserEntity newUser = UserEntity.builder()
                 .username(request.getName())
                 .build();
-        return userRepository.save(newUser);
+        return newUser;
     }
 }
