@@ -1,4 +1,4 @@
-package com.example.be.Business.postUseCases.impl.postUseCasesImpl;
+package com.example.be.Business.postUseCases.impl;
 
 import com.example.be.Business.exception.PostAlreadyExistsException;
 import com.example.be.Business.postUseCases.UpdatePostUseCase;

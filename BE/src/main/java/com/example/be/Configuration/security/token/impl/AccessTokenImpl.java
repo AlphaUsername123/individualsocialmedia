@@ -12,12 +12,12 @@ import java.util.Set;
 @Getter
 public class AccessTokenImpl implements AccessToken {
     private final String subject;
-    private final Long customerId;
+    private final Long UserId;
     private final Set<String> roles;
 
-    public AccessTokenImpl(String subject, Long customerId, Collection<String> roles) {
+    public AccessTokenImpl(String subject, Long UserId, Collection<String> roles) {
         this.subject = subject;
-        this.customerId = customerId;
+        this.UserId = UserId;
         this.roles = roles != null ? Set.copyOf(roles) : Collections.emptySet();
     }
 
