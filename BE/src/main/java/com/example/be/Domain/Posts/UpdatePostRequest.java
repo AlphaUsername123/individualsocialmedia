@@ -12,7 +12,6 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 @AllArgsConstructor
 public class UpdatePostRequest {
-    @NotNull
     private Long id;
     @NotBlank
     private String text;

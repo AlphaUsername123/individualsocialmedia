@@ -15,7 +15,7 @@ import java.util.Optional;
 @RestController
 @AllArgsConstructor
 @CrossOrigin("http://localhost:5173")
-@RequestMapping(value = "/Posts")
+@RequestMapping(value = "/posts")
 public class PostsController {
     private final CreatePostUseCase createPostUseCase;
     private final UpdatePostUseCase updatePostUseCase;
