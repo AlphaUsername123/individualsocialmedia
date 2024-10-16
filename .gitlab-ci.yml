@@ -33,4 +33,4 @@ build_image:
   stage: build_image
   script:
     - cd BE
-    - docker build -t backend:latest .
+    - docker build -t BE:latest .
