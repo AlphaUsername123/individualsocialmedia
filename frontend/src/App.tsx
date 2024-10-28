@@ -11,7 +11,7 @@ function App() {
                 <Route path="/adminpage" element={<ViewPage/>}/>
                 {/*<Route path="/productpost" element={<ProductPost/>}/>*/}
                 {/*<Route path="/editproduct/:ProductId" element={<ProductUpdate/>}/>*/}
-                <Route path="/customerpage" element={<UserPage/>}/>
+                <Route path="/userpage" element={<UserPage/>}/>
                 {/*<Route path="/websocket" element={<WebSocketPage/>}></Route>*/}
 
             </Routes>

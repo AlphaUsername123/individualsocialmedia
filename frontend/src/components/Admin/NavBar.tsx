@@ -12,7 +12,7 @@ const NavBar: React.FC = () => {
     }
 
     return (
-        <Navbar bg="light" expand="lg">
+        <Navbar bg="light" expand="lg" >
             <Container fluid>
                 <Navbar.Brand href="/adminpage">Admin Dashboard</Navbar.Brand>
                 <Navbar.Toggle aria-controls="basic-navbar-nav"/>
