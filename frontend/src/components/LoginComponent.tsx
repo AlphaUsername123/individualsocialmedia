@@ -59,7 +59,7 @@ const LoginComponent = () => {
                            onChange={handleInputChange}/>
                 </div>
                 <div className="text-center"> {/* Centering wrapper */}
-                    <button type="button" className="btn btn-primary" onClick={handleLogin}>Login</button>
+                    <button type="button" className="btn btn-primary " onClick={handleLogin}>Login</button>
                     {error && <p className="text-danger mt-2">{error}</p>}
                 </div>
             </div>

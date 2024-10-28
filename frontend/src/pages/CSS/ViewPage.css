@@ -1,0 +1,18 @@
+html, body, #root {
+    height: 100%;
+    margin: 0;
+    width: 100%;
+}
+
+.app-container {
+    display: flex;
+    flex-direction: column;
+    height: 100%;
+}
+
+.content {
+    flex: 1;
+    padding: 50px; /* Adjust padding as needed */
+    padding-left: 200px;
+    background: linear-gradient(to bottom, #b1db34, #3c502c);
+}

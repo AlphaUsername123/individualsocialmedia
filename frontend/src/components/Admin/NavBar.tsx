@@ -1,6 +1,6 @@
 import React from 'react';
 import {useNavigate} from "react-router-dom";
-import {Container, Navbar, Nav, NavDropdown} from 'react-bootstrap';
+import {Container, Navbar, Nav, NavDropdown, Button} from 'react-bootstrap';
 
 const NavBar: React.FC = () => {
 
@@ -21,6 +21,7 @@ const NavBar: React.FC = () => {
                         <Nav.Link href="/adminpage">Home</Nav.Link>
                         <Nav.Link href="/websocket">Live Chat</Nav.Link>
                         <Nav.Link href="/productpost">Add Product</Nav.Link>
+                        <Nav.Link className='header-right' href="/customerpage">Customer Page</Nav.Link>
                     </Nav>
                 </Navbar.Collapse>
                 <button onClick={handleLogout} className='header-right'>logout</button>
