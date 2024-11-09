@@ -1,0 +1,3 @@
+ALTER TABLE posts
+    ADD COLUMN user_id BIGINT,
+ADD FOREIGN KEY (user_id) REFERENCES `user`(id) ON DELETE CASCADE;
