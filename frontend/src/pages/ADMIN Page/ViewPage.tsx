@@ -2,14 +2,14 @@ import React from 'react';
 import NavBar from "../../components/Admin/NavBar.tsx";
 import Footer from "../../components/Admin/Footer.tsx";
 import '../CSS/ViewPage.css';
-import {Button} from "react-bootstrap";
+import PostsData from "../../components/PostsData.tsx";
 
 const ViewPage = () => {
     return (
         <div className="app-container">
             <NavBar/>
             <div className="content">
-                {/*<ProductsData/>*/}
+                <PostsData/>
             </div>
             <Footer/>
         </div>

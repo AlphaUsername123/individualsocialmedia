@@ -20,8 +20,8 @@ const NavBar: React.FC = () => {
                     <Nav className="me-auto">
                         <Nav.Link href="/adminpage">Home</Nav.Link>
                         <Nav.Link href="/websocket">Live Chat</Nav.Link>
-                        <Nav.Link href="/productpost">Add Product</Nav.Link>
-                        <Nav.Link className='header-right' href="/customerpage">Customer Page</Nav.Link>
+                        {/*<Nav.Link href="/productpost">Add Post</Nav.Link>*/}
+                        <Nav.Link className='header-right' href="/userpage">User Page</Nav.Link>
                     </Nav>
                 </Navbar.Collapse>
                 <button onClick={handleLogout} className='header-right'>logout</button>

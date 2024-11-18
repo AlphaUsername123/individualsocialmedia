@@ -14,18 +14,13 @@ const NavBarUser: React.FC = () => {
     return (
         <Navbar bg="light" expand="lg">
             <Container fluid>
-                <Navbar.Brand href="/customerpage">Customer Page</Navbar.Brand>
+                <Navbar.Brand href="/userpage">User Page</Navbar.Brand>
                 <Navbar.Toggle aria-controls="basic-navbar-nav"/>
                 <Navbar.Collapse id="basic-navbar-nav">
                     <Nav className="me-auto">
-                        <Nav.Link href="/customerpage">Home</Nav.Link>
+                        <Nav.Link href="/userpage">Home</Nav.Link>
                         <Nav.Link href="/websocket">Live Chat</Nav.Link>
-                        <NavDropdown title="Dropdown" id="basic-nav-dropdown">
-                            <NavDropdown.Item href="#action/3.1">Action</NavDropdown.Item>
-                            <NavDropdown.Item href="#action/3.2">Another action</NavDropdown.Item>
-                            <NavDropdown.Divider/>
-                            <NavDropdown.Item href="#action/3.3">Something else here</NavDropdown.Item>
-                        </NavDropdown>
+                        <Nav.Link href="/addpost">Add Post</Nav.Link>
                     </Nav>
                 </Navbar.Collapse>
                 <button onClick={handleLogout} className='header-right'>logout</button>
