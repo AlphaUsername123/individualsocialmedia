@@ -1,0 +1,20 @@
+@startuml
+!include <C4/C4_Component>
+
+Container_Boundary(frontend, "Frontend Application") {
+    Component(auth, "Authentication Component", "React.js", "Handles login and session management.")
+    Component(posts, "Posts Component", "React.js", "Displays and manages user posts.")
+    Component(friends, "Friends Component", "React.js", "Manages user friend lists and requests.")
+    Component(apiService, "API Service", "Axios/Fetch", "Communicates with backend APIs.")
+}
+
+System_Boundary(externalSystems, "Backend") {
+    Container_Ext(backendApi, "Backend API", "Spring Boot", "Processes business logic and data.")
+}
+
+' Relationships
+auth -down-> apiService : "Sends login credentials"
+posts -down-> apiService : "Fetches and updates posts"
+friends -down-> apiService : "Handles friend requests"
+apiService -down-> backendApi : "Sends API calls"
+@enduml

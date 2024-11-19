@@ -1,0 +1,21 @@
+@startuml
+!include <C4/C4_Container>
+
+Person(user, "User", "Interacts with the platform.")
+Person(moderator, "Moderator", "Manages bans and reports.")
+
+System_Boundary(socialMedia, "Social Media System") {
+    Container(frontend, "Frontend", "React.js", "Provides the user interface for the application.")
+    Container(backend, "Backend", "Spring Boot", "Handles business logic and data processing.")
+    ContainerDb(database, "Database", "MySQL", "Stores user, post, and interaction data.")
+    Container(webSocketService, "WebSocket Service", "Spring Boot", "Handles live chat between users and moderators.")
+}
+
+' Relationships
+user -down-> frontend : "Accesses via browser"
+frontend -down-> backend : "Sends API requests"
+backend -down-> database : "Stores and retrieves data"
+backend -down-> webSocketService : "Handles chat initiation"
+moderator -down-> frontend : "Uses moderation interface"
+webSocketService -down-> database : "Logs chat history"
+@enduml

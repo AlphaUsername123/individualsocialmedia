@@ -1,0 +1,13 @@
+@startuml
+!include <C4/C4_Context>
+
+Person(user, "User", "Interacts with the social media platform.")
+Person(moderator, "Moderator", "Manages bans and reviews reports.")
+
+System(socialMedia, "Social Media System", "Allows users to create posts, interact with others, and manage content.")
+
+' Relationships
+user -down-> socialMedia : "Posts content, likes, comments"
+moderator -down-> socialMedia : "Manages bans and content"
+
+@enduml
