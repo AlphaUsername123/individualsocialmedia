@@ -1,23 +1,21 @@
 @startuml
 !include <C4/C4_Component>
 
-System_Boundary(ciPipeline, "CI/CD Pipeline") {
-    Component(codeRepo, "Code Repository", "GitHub/GitLab", "Stores source code")
-    Component(buildServer, "Build Server", "Jenkins/GitHub Actions", "Orchestrates CI/CD pipeline")
-    Component(buildStage, "Build Stage", "Gradle", "Compiles the code and builds artifacts")
+System_Boundary(ciPipeline, "GitLab CI/CD Pipeline") {
+    Component(codeRepo, "Code Repository", "GitLab", "Stores source code and triggers CI/CD pipeline")
+    Component(buildStage, "Build Stage", "Gradle", "Compiles code and creates artifacts")
     Component(testStage, "Test Stage", "JUnit/Jest", "Runs unit and integration tests")
-    Component(sonarStage, "SonarQube Stage", "SonarQube", "Analyzes code quality and checks for vulnerabilities")
-    Component(deployStage, "Deployment Stage", "Docker/Kubernetes", "Deploys the application to the target environment")
+    Component(sonarStage, "SonarQube Stage", "SonarQube", "Performs static code analysis")
+    Component(deployStage, "Deployment Stage", "Docker/Kubernetes", "Deploys the application to the environment")
 }
 
 Person(dev, "Developer", "Commits code changes")
 
-' Relationships with enforced directions
-dev -down-> codeRepo : "Pushes code changes"
-codeRepo -down-> buildServer : "Triggers pipeline"
-buildServer -down-> buildStage : "Runs build jobs"
-buildStage -down-> testStage : "Executes tests"
-testStage -down-> sonarStage : "Triggers static code analysis"
+' Relationships
+dev -down-> codeRepo : "Pushes changes"
+codeRepo -down-> buildStage : "Triggers build"
+buildStage -down-> testStage : "Runs tests"
+testStage -down-> sonarStage : "Checks quality gates"
 sonarStage -down-> deployStage : "Proceeds if quality gate passes"
-deployStage -down-> appEnv : "Deploys to production environment"
+deployStage -down-> appEnv : "Deploys application"
 @enduml
