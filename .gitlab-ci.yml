@@ -32,5 +32,5 @@ sonar:
 build_image:
   stage: build_image
   script:
-    - cd BE
-    - docker build -t BE:latest .
+    - cd be
+    - docker build -t be:latest .
