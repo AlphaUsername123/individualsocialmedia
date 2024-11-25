@@ -10,21 +10,21 @@ const isNotAuthenticated = () => {
 };
 
 
-// axios.interceptors.response.use(response => response, error => {
-//     console.log(error.response.status);
-//     TokenManager.setAccessToken(localStorage.getItem('accessToken'));
-//     if(TokenManager.getClaims().roles != "ADMIN")
-//     {
-//         return window.location.assign('/noaccess');
-//     }
-//     if (error.response.status === 401) {
-//         localStorage.removeItem('accessToken'); // Clear the token
-//         // Optionally, add more cleanup actions here
-//     }
-//
-//     window.location.assign('/');
-//     return Promise.reject(error);
-// });
+axios.interceptors.response.use(response => response, error => {
+    console.log(error.response.status);
+    TokenManager.setAccessToken(localStorage.getItem('accessToken'));
+    if(TokenManager.getClaims().roles != "ADMIN")
+    {
+        return window.location.assign('/noaccess');
+    }
+    if (error.response.status === 401) {
+        localStorage.removeItem('accessToken'); // Clear the token
+        // Optionally, add more cleanup actions here
+    }
+
+    window.location.assign('/');
+    return Promise.reject(error);
+});
 
 
 // Define a ProtectedRoute component

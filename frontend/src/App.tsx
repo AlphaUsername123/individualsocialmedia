@@ -7,13 +7,14 @@ import React from "react";
 import PostUpdate from "./components/PostUpdate.tsx";
 import ProtectedRoute from "./components/ProtectedRoute.tsx";
 import NotAuthorizedRolePage from "./pages/Error/NotAuthorizedRolePage.tsx";
+import ProtectedRouteAdmin from "./components/ProtectedRouteAdmin.tsx";
 
 function App() {
     return (
         <Router>
             <Routes>
                 <Route path="/" element={<LoginPage/>}/>
-                <Route path="/adminpage" element={<ProtectedRoute><ViewPage/></ProtectedRoute>}/>
+                <Route path="/adminpage" element={<ProtectedRouteAdmin><ViewPage/></ProtectedRouteAdmin>}/>
                 {/*<Route path="/productpost" element={<AddPost/>}/>*/}
                 {/*<Route path="/editproduct/:ProductId" element={<PostUpdate/>}/>*/}
                 <Route path="/userpage" element={<ProtectedRoute><UserPage/></ProtectedRoute>}/>

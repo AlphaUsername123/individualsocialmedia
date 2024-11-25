@@ -39,14 +39,12 @@ public class PostsController {
         return ResponseEntity.ok().body(PostOptional.get());
     }
 
-    @RolesAllowed({"ADMIN"})
     @PostMapping()
     public ResponseEntity<CreatePostResponse> create(@RequestBody @Valid CreatePostRequest request) {
             CreatePostResponse response = createPostUseCase.createPost(request);
             return ResponseEntity.status(HttpStatus.CREATED).body(response);
     }
 
-    @RolesAllowed({"ADMIN"})
     @PutMapping("{id}")
     public ResponseEntity<Post> update(@PathVariable("id") long id, @RequestBody @Valid UpdatePostRequest request) {
         request.setId(id);
@@ -54,7 +52,6 @@ public class PostsController {
         return ResponseEntity.noContent().build();
     }
 
-    @RolesAllowed({"ADMIN"})
     @DeleteMapping("{PostId}")
     public ResponseEntity<Void> deletePost(@PathVariable int PostId) {
         deletePostUseCase.deletePost(PostId);
