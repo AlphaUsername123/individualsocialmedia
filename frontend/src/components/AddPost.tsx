@@ -15,7 +15,7 @@ const AddPost = () => {
         // Handle form submission with formData
         console.log(formData);
         await PostAPI.postThePost(formData);
-        navigate("/adminpage");
+        navigate("/userpage");
         window.location.reload();
     };
 

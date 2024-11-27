@@ -8,6 +8,7 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 import org.hibernate.validator.constraints.Length;
 
+import java.util.List;
 import java.util.Set;
 
 @Entity
@@ -35,5 +36,9 @@ public class UserEntity {
     @JoinColumn(name = "user_id")
     private Set<UserRoleEntity> userRoles;
 
+    @OneToMany(mappedBy = "user", cascade = CascadeType.ALL)
+    private List<PostEntity> posts;
 
+    @OneToMany(mappedBy = "user", cascade = CascadeType.ALL)
+    private List<LikeEntity> likes;
 }

@@ -1,15 +1,15 @@
 package com.example.be.Controller;
 
 import com.example.be.Business.postUseCases.*;
+import com.example.be.Domain.Like.LikePostRequest;
+import com.example.be.Domain.Like.LikePostResponse;
 import com.example.be.Domain.Posts.*;
-import jakarta.annotation.security.RolesAllowed;
 import jakarta.validation.Valid;
 import lombok.AllArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
-import java.math.BigDecimal;
 import java.util.Optional;
 
 @RestController
@@ -22,6 +22,7 @@ public class PostsController {
     private final GetPostUseCase getPostUseCase;
     private final GetPostsUseCase getPostsUseCase;
     private final DeletePostUseCase deletePostUseCase;
+    private final LikePostUseCase likePostUseCase;
 
     @GetMapping("/getall")
     public ResponseEntity<GetAllPostsResponse> getAll() {
@@ -56,5 +57,11 @@ public class PostsController {
     public ResponseEntity<Void> deletePost(@PathVariable int PostId) {
         deletePostUseCase.deletePost(PostId);
         return ResponseEntity.noContent().build();
+    }
+
+    @PostMapping("/{postId}/like")
+    public LikePostResponse likePost(@PathVariable Long postId, @RequestBody LikePostRequest request) {
+        Long likeCount = likePostUseCase.likePost(request.getUserId(), postId);
+        return new LikePostResponse(likeCount);
     }
 }

@@ -2,12 +2,15 @@ import React, {useEffect, useState} from 'react';
 import {useNavigate, useParams} from "react-router-dom";
 import PostAPI from "../api/PostAPI.tsx";
 import NavBarUser from "./User/NavBarUser.tsx";
+import axios from "axios";
+import TokenManager from "../api/TokenManager.tsx";
 
 function PostUpdate() {
     const [formData, setFormData] = useState({
         id: '',
         text: ''
     });
+    const [isAdmin, setIsAdmin] = useState(false); // default to false
 
     const {PostId} = useParams();
     const navigate = useNavigate();
@@ -33,7 +36,16 @@ function PostUpdate() {
         try {
             formData.id = PostId;
             await PostAPI.updatePost(formData);
-            navigate("/adminpage");
+            TokenManager.setAccessToken(localStorage.getItem('accessToken'));
+            if (TokenManager.getClaims().roles != "ADMIN") {
+                setIsAdmin(false);
+            }
+            if (isAdmin == true) {
+                navigate("/adminpage");
+            }
+            else if (isAdmin != true) {
+                navigate("/userpage");
+            }
             window.location.reload();
         } catch (error) {
             console.error('Error submitting form:', error);
@@ -45,7 +57,7 @@ function PostUpdate() {
             <NavBarUser/>
             <form onSubmit={handleFormSubmit}>
                 <label>
-                   Text:
+                    Text:
                     <input
                         type="text"
                         name="title"

@@ -1,9 +1,12 @@
 import React from 'react';
+import {useNavigate} from "react-router-dom";
 
 const NotAuthorizedRolePage = () => {
 
+    const navigate = useNavigate()
     const goBack = () => {
-       window.history.back();// Navigate back to the previous page in the history stack
+       // window.history.back();// Navigate back to the previous page in the history stack
+        navigate(-2);
     };
 
     return (
