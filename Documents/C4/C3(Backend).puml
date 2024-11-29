@@ -5,7 +5,6 @@ Container_Boundary(backend, "Backend API") {
     Component(authService, "Authentication Service", "Spring Security", "Validates login credentials and JWTs.")
     Component(userService, "User Service", "Spring Boot", "Manages user profiles and CRUD operations.")
     Component(postService, "Post Service", "Spring Boot", "Handles posts CRUD operations.")
-    Component(friendService, "Friend Service", "Spring Boot", "Manages friend requests and lists.")
     Component(webSocketService, "WebSocket Service", "Spring Boot", "Manages live chat sessions.")
     Component(dbAccess, "Database Access Layer", "JPA/Hibernate", "Handles all database interactions.")
 }
@@ -16,7 +15,6 @@ ContainerDb(database, "Database", "MySQL", "Stores all application data.")
 authService -down-> dbAccess : "Validates users"
 userService -down-> dbAccess : "Fetches and updates user data"
 postService -down-> dbAccess : "Stores and retrieves posts"
-friendService -down-> dbAccess : "Handles friend relationships"
 webSocketService -down-> dbAccess : "Logs chat history"
 dbAccess -down-> database : "Performs SQL queries"
 @enduml
