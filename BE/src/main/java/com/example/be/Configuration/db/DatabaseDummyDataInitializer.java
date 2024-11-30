@@ -27,7 +27,7 @@ public class DatabaseDummyDataInitializer {
     @Transactional
     public void populateDatabaseInitialDummyData() {
         if (isDatabaseEmpty()) {
-            insertAdminUser();
+            insertMODERATORUser();
             insertUser();
             insertProducts();
         }
@@ -37,14 +37,14 @@ public class DatabaseDummyDataInitializer {
         return userRepository.count() == 0;
     }
 
-    private void insertAdminUser() {
-        UserEntity adminUser = UserEntity.builder()
-                .username("admin@fontys.nl")
+    private void insertMODERATORUser() {
+        UserEntity MODERATORUser = UserEntity.builder()
+                .username("MODERATOR@fontys.nl")
                 .password(passwordEncoder.encode("test123"))
                 .build();
-        UserRoleEntity adminRole = UserRoleEntity.builder().role(RoleEnum.ADMIN).user(adminUser).build();
-        adminUser.setUserRoles(Set.of(adminRole));
-        userRepository.save(adminUser);
+        UserRoleEntity MODERATORRole = UserRoleEntity.builder().role(RoleEnum.MODERATOR).user(MODERATORUser).build();
+        MODERATORUser.setUserRoles(Set.of(MODERATORRole));
+        userRepository.save(MODERATORUser);
     }
 
     private void insertUser() {
