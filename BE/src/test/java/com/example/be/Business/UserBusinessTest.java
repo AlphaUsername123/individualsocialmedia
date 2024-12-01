@@ -1,14 +1,13 @@
 package com.example.be.Business;
 
-import com.example.backend.Business.exception.InvalidCountryException;
-import com.example.backend.Business.exception.InvalidCustomerException;
-import com.example.backend.Business.impl.customerUseCasesImpl.*;
-import com.example.backend.Domain.Customer.*;
-import com.example.backend.Repository.CustomerRepository;
-import com.example.backend.Repository.UserRepository;
-import com.example.backend.Repository.entity.CountryEntity;
-import com.example.backend.Repository.entity.CustomerEntity;
-import com.example.backend.Repository.entity.UserEntity;
+import com.example.be.Business.exception.InvalidUserException;
+import com.example.be.Business.userUseCases.userUseCasesImpl.*;
+import com.example.be.Domain.User.CreateUserRequest;
+import com.example.be.Domain.User.CreateUserResponse;
+import com.example.be.Domain.User.UpdateUserRequest;
+import com.example.be.Domain.User.User;
+import com.example.be.Repository.UserRepository;
+import com.example.be.Repository.entity.UserEntity;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
@@ -26,243 +25,143 @@ import static org.mockito.Mockito.*;
 @ExtendWith(SpringExtension.class)
 class UserBusinessTest {
     @Mock
-    private CustomerRepository customerRepository;
-
-    @Mock
-    private CountryIdValidator countryIdValidator;
-
-    @Mock
     private UserRepository userRepository;
 
     @Mock
     private PasswordEncoder passwordEncoder;
 
     @InjectMocks
-    private CreateCustomerUseCaseImpl createCustomerUseCase;
+    private CreateUserUseCaseImpl createUserUseCase;
     @InjectMocks
-    private UpdateCustomerUseCaseImpl updateCustomerUseCase;
+    private UpdateUserUseCaseImpl updateUserUseCase;
     @InjectMocks
-    private GetCustomersUseCaseImpl getCustomersUseCase;
+    private GetUsersUseCaseImpl getUsersUseCase;
     @InjectMocks
-    private GetCustomerUseCaseImpl getCustomerUseCase;
+    private GetUserUseCaseImpl getUserUseCase;
     @InjectMocks
-    private DeleteCustomerUseCaseImpl deleteCustomerUseCase;
+    private DeleteUserUseCaseImpl deleteUserUseCase;
 
 
     @Test
-    void createCustomer_ValidRequest_CreatesCustomer() {
+    void createUser_ValidRequest_CreatesUser() {
         // Arrange
-        CountryEntity countryEntity = CountryEntity.builder()
-                .id(2L)
-                .name("Netherlands")
-                .code("NL")
-                .build();
-
-        CreateCustomerRequest request = CreateCustomerRequest.builder()
+        CreateUserRequest request = CreateUserRequest.builder()
                 .name("John Doe")
-                .countryId(2L)
                 .password("password") // Assuming password is provided
                 .build();
 
-        CustomerEntity customerEntity = CustomerEntity.builder()
+        UserEntity userEntity = UserEntity.builder()
                 .id(1L)
-                .name("John Doe")
-                .country(countryEntity)
+                .username("John Doe")
                 .build();
 
         String encodedPassword = "encodedPassword"; // Mocked encoded password
 
-        when(customerRepository.save(any(CustomerEntity.class))).thenReturn(customerEntity);
+        when(userRepository.save(any(UserEntity.class))).thenReturn(userEntity);
         when(passwordEncoder.encode(request.getPassword())).thenReturn(encodedPassword);
 
         // Act
-        CreateCustomerResponse response = createCustomerUseCase.createCustomer(request);
+        CreateUserResponse response = createUserUseCase.createUser(request);
 
         // Assert
-        assertEquals(1L, response.getCustomerId());
-        verify(countryIdValidator).validateId(request.getCountryId());
-        verify(customerRepository).save(any(CustomerEntity.class));
+        assertEquals(1L, response.getUserId());
+        verify(userRepository).save(any(UserEntity.class));
         verify(userRepository).save(any(UserEntity.class));
     }
 
     @Test
-    void createCustomer_InvalidCountryId_ThrowsInvalidCountryException() {
+    void updateUser_ValidRequest_UpdatesUser() {
         // Arrange
-        CreateCustomerRequest request = CreateCustomerRequest.builder()
-                .name("John Doe")
-                .countryId(1L)
-                .build();
 
-        doThrow(new InvalidCountryException()).when(countryIdValidator).validateId(1L);
-
-        // Act & Assert
-        assertThrows(InvalidCountryException.class, () -> createCustomerUseCase.createCustomer(request));
-        verify(countryIdValidator).validateId(1L);
-        verify(customerRepository, never()).save(any(CustomerEntity.class));
-    }
-
-    @Test
-    void updateCustomer_ValidRequest_UpdatesCustomer() {
-        // Arrange
-        CountryEntity countryEntity = CountryEntity.builder()
-                .id(2L)
-                .name("United States")
-                .code("US")
-                .build();
-
-        UpdateCustomerRequest request = UpdateCustomerRequest.builder()
+        UpdateUserRequest request = UpdateUserRequest.builder()
                 .id(1L)
                 .name("Updated Name")
-                .countryId(2L)
                 .build();
 
-        CustomerEntity existingCustomer = CustomerEntity.builder()
+        UserEntity existingUser = UserEntity.builder()
                 .id(1L)
-                .name("Old Name")
-                .country(countryEntity)
+                .username("Old Name")
                 .build();
 
-        when(customerRepository.findById(1L)).thenReturn(Optional.of(existingCustomer));
+        when(userRepository.findById(1L)).thenReturn(Optional.of(existingUser));
 
         // Act
-        updateCustomerUseCase.updateCustomer(request);
+        updateUserUseCase.updateUser(request);
 
         // Assert
-        verify(customerRepository).findById(1L);
-        verify(customerRepository).save(any(CustomerEntity.class));
+        verify(userRepository).findById(1L);
+        verify(userRepository).save(any(UserEntity.class));
     }
 
     @Test
-    void updateCustomer_InvalidCustomerId_ThrowsException() {
+    void updateUser_InvalidUserId_ThrowsException() {
         // Arrange
-        UpdateCustomerRequest request = UpdateCustomerRequest.builder()
+        UpdateUserRequest request = UpdateUserRequest.builder()
                 .id(1L)
                 .name("Updated Name")
-                .countryId(2L)
                 .build();
 
-        when(customerRepository.findById(1L)).thenReturn(Optional.empty());
+        when(userRepository.findById(1L)).thenReturn(Optional.empty());
 
         // Act & Assert
-        assertThrows(InvalidCustomerException.class, () -> updateCustomerUseCase.updateCustomer(request));
-        verify(customerRepository).findById(1L);
-        verify(customerRepository, never()).save(any(CustomerEntity.class));
+        assertThrows(InvalidUserException.class, () -> updateUserUseCase.updateUser(request));
+        verify(userRepository).findById(1L);
+        verify(userRepository, never()).save(any(UserEntity.class));
     }
 
     @Test
-    void getCustomers_NoFilter_ReturnsAllCustomers() {
+    void getUser_ExistingUserId_ReturnsUser() {
         // Arrange
-        CountryEntity countryEntity = CountryEntity.builder()
+        UserEntity userEntity = UserEntity.builder()
                 .id(1L)
-                .name("United States")
-                .code("US")
+                .username("John Doe")
                 .build();
 
-        List<CustomerEntity> customerEntities = List.of(
-                CustomerEntity.builder().id(1L).name("John Doe").country(countryEntity).build(),
-                CustomerEntity.builder().id(2L).name("Jane Doe").country(countryEntity).build()
-        );
-
-        when(customerRepository.findAll()).thenReturn(customerEntities);
+        when(userRepository.findById(1L)).thenReturn(Optional.of(userEntity));
 
         // Act
-        GetAllCustomersResponse response = getCustomersUseCase.getCustomers(new GetAllCustomersRequest());
-
-        // Assert
-        assertEquals(2, response.getCustomers().size());
-        verify(customerRepository).findAll();
-    }
-
-    @Test
-    void getCustomers_WithCountryCodeFilter_ReturnsFilteredCustomers() {
-        // Arrange
-        String countryCode = "US";
-        GetAllCustomersRequest request = GetAllCustomersRequest.builder()
-                .countryCode(countryCode)
-                .build();
-
-        List<CustomerEntity> customerEntities = List.of(
-                CustomerEntity.builder()
-                        .id(1L)
-                        .name("John Doe")
-                        .country(CountryEntity.builder()
-                                .id(1L)
-                                .name("United States")
-                                .code(countryCode)
-                                .build())
-                        .build()
-        );
-
-        when(customerRepository.findByCountryCode(countryCode)).thenReturn(customerEntities);
-
-        // Act
-        GetAllCustomersResponse response = getCustomersUseCase.getCustomers(request);
-
-        // Assert
-        assertEquals(1, response.getCustomers().size());
-        verify(customerRepository).findByCountryCode(countryCode);
-    }
-
-    @Test
-    void getCustomer_ExistingCustomerId_ReturnsCustomer() {
-        // Arrange
-        CountryEntity countryEntity = CountryEntity.builder()
-                .id(1L)
-                .name("United States")
-                .code("US")
-                .build();
-
-        CustomerEntity customerEntity = CustomerEntity.builder()
-                .id(1L)
-                .name("John Doe")
-                .country(countryEntity)
-                .build();
-
-        when(customerRepository.findById(1L)).thenReturn(Optional.of(customerEntity));
-
-        // Act
-        Optional<Customer> result = getCustomerUseCase.getCustomer(1L);
+        Optional<User> result = getUserUseCase.getUser(1L);
 
         // Assert
         assertTrue(result.isPresent());
         assertEquals("John Doe", result.get().getName());
-        verify(customerRepository).findById(1L);
+        verify(userRepository).findById(1L);
     }
 
     @Test
-    void getCustomer_NonExistingCustomerId_ReturnsEmpty() {
+    void getUser_NonExistingUserId_ReturnsEmpty() {
         // Arrange
-        when(customerRepository.findById(1L)).thenReturn(Optional.empty());
+        when(userRepository.findById(1L)).thenReturn(Optional.empty());
 
         // Act
-        Optional<Customer> result = getCustomerUseCase.getCustomer(1L);
+        Optional<User> result = getUserUseCase.getUser(1L);
 
         // Assert
         assertFalse(result.isPresent());
-        verify(customerRepository).findById(1L);
+        verify(userRepository).findById(1L);
     }
 
     @Test
-    void deleteCustomer_ValidCustomerId_DeletesCustomer() {
+    void deleteUser_ValidUserId_DeletesUser() {
         // Arrange
-        long customerId = 1L;
-        when(customerRepository.existsById(customerId)).thenReturn(true);
+        long UserId = 1L;
+        when(userRepository.existsById(UserId)).thenReturn(true);
 
         // Act
-        deleteCustomerUseCase.deleteCustomer(customerId);
+        deleteUserUseCase.deleteUser(UserId);
 
         // Assert
-        verify(customerRepository, times(1)).deleteById(customerId);
+        verify(userRepository, times(1)).deleteById(UserId);
     }
 
     @Test
-    void deleteCustomer_InvalidCustomerId_ThrowsException() {
+    void deleteUser_InvalidUserId_ThrowsException() {
         // Arrange
-        long customerId = 1L;
-        when(customerRepository.existsById(customerId)).thenReturn(false);
+        long UserId = 1L;
+        when(userRepository.existsById(UserId)).thenReturn(false);
 
         // Act & Assert
-        assertThrows(InvalidCustomerException.class, () -> deleteCustomerUseCase.deleteCustomer(customerId));
-        verify(customerRepository, never()).deleteById(customerId);
+        assertThrows(InvalidUserException.class, () -> deleteUserUseCase.deleteUser(UserId));
+        verify(userRepository, never()).deleteById(UserId);
     }
 }

@@ -1,9 +1,9 @@
 package com.example.be.Services;
 
 
-import com.example.backend.Business.customerUseCases.*;
-import com.example.backend.Domain.Country;
-import com.example.backend.Domain.Customer.*;
+import com.example.be.Business.userUseCases.*;
+import com.example.be.Domain.User.*;
+import com.example.be.Repository.entity.UserEntity;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -32,180 +32,132 @@ class UserControllerTest {
     private MockMvc mockMvc;
 
     @MockBean
-    private GetCustomerUseCase getCustomerUseCase;
+    private GetUserUseCase getUserUseCase;
     @MockBean
-    private GetCustomersUseCase getCustomersUseCase;
+    private GetUsersUseCase getUsersUseCase;
     @MockBean
-    private DeleteCustomerUseCase deleteCustomerUseCase;
+    private DeleteUserUseCase deleteUserUseCase;
     @MockBean
-    private CreateCustomerUseCase createCustomerUseCase;
+    private CreateUserUseCase createUserUseCase;
     @MockBean
-    private UpdateCustomerUseCase updateCustomerUseCase;
+    private UpdateUserUseCase updateUserUseCase;
 
     @Test
-    @WithMockUser(username = "10@fontys.nl", roles = {"CUSTOMER"})
-    void getCustomer_shouldReturn200WithCustomer_whenCustomerFound() throws Exception {
-        Customer customer = Customer.builder()
-                .country(getBrazilDTO())
+    @WithMockUser(username = "10@fontys.nl", roles = {"User"})
+    void getUser_shouldReturn200WithUser_whenUserFound() throws Exception {
+        User user = User.builder()
                 .name("Rivaldo Vítor Borba Ferreira")
                 .id(10L)
                 .build();
-        when(getCustomerUseCase.getCustomer(10L)).thenReturn(Optional.of(customer));
+        when(getUserUseCase.getUser(10L)).thenReturn(Optional.of(user));
 
-        mockMvc.perform(get("/customers/10"))
+        mockMvc.perform(get("/Users/10"))
                 .andDo(print())
                 .andExpect(status().isOk())
                 .andExpect(header().string("Content-Type", APPLICATION_JSON_VALUE))
                 .andExpect(content().json("""
-                           {"id":10, "name":"Rivaldo Vítor Borba Ferreira","country":{"id":1,"code":"BR","name":"Brazil"}}
+                           {"id":10, "username":"Rivaldo Vítor Borba Ferreira"}
                         """));
 
-        verify(getCustomerUseCase).getCustomer(10L);
+        verify(getUserUseCase).getUser(10L);
     }
 
     @Test
-    @WithMockUser(username = "10@fontys.nl", roles = {"CUSTOMER"})
-    void getCustomer_shouldReturn404Error_whenCustomerNotFound() throws Exception {
-        when(getCustomerUseCase.getCustomer(10L)).thenReturn(Optional.empty());
+    @WithMockUser(username = "10@fontys.nl", roles = {"User"})
+    void getUser_shouldReturn404Error_whenUserNotFound() throws Exception {
+        when(getUserUseCase.getUser(10L)).thenReturn(Optional.empty());
 
-        mockMvc.perform(get("/customers/10"))
+        mockMvc.perform(get("/Users/10"))
                 .andDo(print())
                 .andExpect(status().isNotFound());
 
-        verify(getCustomerUseCase).getCustomer(10L);
+        verify(getUserUseCase).getUser(10L);
     }
 
     @Test
     @WithMockUser(username = "MODERATOR@fontys.nl", roles = {"MODERATOR"})
-    void getAllCustomers_shouldReturn200WithCustomersList_WhenNoFilterProvided() throws Exception {
-        GetAllCustomersResponse responseDTO = GetAllCustomersResponse.builder()
-                .customers(List.of(
-                        Customer.builder().id(1L).name("Romario").country(getBrazilDTO()).build(),
-                        Customer.builder().id(1L).name("Ronaldo").country(getBrazilDTO()).build()
+    void getAllUsers_shouldReturn200WithUsersList_WhenNoFilterProvided() throws Exception {
+        GetAllUsersResponse responseDTO = GetAllUsersResponse.builder()
+                .Users(List.of(
+                        User.builder().id(1L).name("Romario").build(),
+                        User.builder().id(1L).name("Ronaldo").build()
                 ))
                 .build();
-        GetAllCustomersRequest request = GetAllCustomersRequest.builder().build();
-        when(getCustomersUseCase.getCustomers(request)).thenReturn(responseDTO);
+        GetAllUsersRequest request = GetAllUsersRequest.builder().build();
+        when(getUsersUseCase.getUsers(request)).thenReturn(responseDTO);
 
-        mockMvc.perform(get("/customers"))
+        mockMvc.perform(get("/Users"))
                 .andDo(print())
                 .andExpect(status().isOk())
                 .andExpect(header().string("Content-Type", APPLICATION_JSON_VALUE))
                 .andExpect(content().json("""
                             {
-                                "customers":[
-                                    {"id":1, "name":"Romario","country":{"id":1,"code":"BR","name":"Brazil"}},
-                                    {"id":1, "name":"Ronaldo","country":{"id":1,"code":"BR","name":"Brazil"}}
+                                "Users":[
+                                    {"id":1, "name":"Romario"},
+                                    {"id":1, "name":"Ronaldo"}
                                 ]
                             }
                         """));
 
-        verify(getCustomersUseCase).getCustomers(request);
+        verify(getUsersUseCase).getUsers(request);
     }
 
     @Test
     @WithMockUser(username = "MODERATOR@fontys.nl", roles = {"MODERATOR"})
-    void getAllCustomers_shouldReturn200WithCustomersList_WhenCountryFilterProvided() throws Exception {
-        Country country = Country.builder()
-                .code("NL")
-                .name("Netherlands")
-                .id(2L)
-                .build();
-        GetAllCustomersResponse responseDTO = GetAllCustomersResponse.builder()
-                .customers(List.of(
-                        Customer.builder().id(1L).name("Dennis Bergkamp").country(country).build(),
-                        Customer.builder().id(1L).name("Johan Cruyff").country(country).build()
-                ))
-                .build();
-        GetAllCustomersRequest request = GetAllCustomersRequest.builder()
-                .countryCode("NL")
-                .build();
-        when(getCustomersUseCase.getCustomers(request)).thenReturn(responseDTO);
-
-        mockMvc.perform(get("/customers").param("country", "NL"))
-                .andDo(print())
-                .andExpect(status().isOk())
-                .andExpect(header().string("Content-Type", APPLICATION_JSON_VALUE))
-                .andExpect(content().json("""
-                            {
-                                "customers":[
-                                    {"id":1,"name":"Dennis Bergkamp","country":{"id":2,"code":"NL","name":"Netherlands"}},
-                                    {"id":1,"name":"Johan Cruyff","country":{"id":2,"code":"NL","name":"Netherlands"}}
-                                ]
-                            }
-                        """));
-
-        verify(getCustomersUseCase).getCustomers(request);
-    }
-
-    @Test
-    @WithMockUser(username = "MODERATOR@fontys.nl", roles = {"MODERATOR"})
-    void deleteCustomer_shouldReturn204() throws Exception {
-        mockMvc.perform(delete("/customers/100"))
+    void deleteUser_shouldReturn204() throws Exception {
+        mockMvc.perform(delete("/Users/100"))
                 .andDo(print())
                 .andExpect(status().isNoContent());
 
-        verify(deleteCustomerUseCase).deleteCustomer(100L);
+        verify(deleteUserUseCase).deleteUser(100L);
     }
 
     @Test
     @WithMockUser(username = "MODERATOR@fontys.nl", roles = {"MODERATOR"})
-    void createCustomer_shouldReturn201_whenRequestIsValid() throws Exception {
-        CreateCustomerRequest expectedRequest = CreateCustomerRequest.builder()
+    void createUser_shouldReturn201_whenRequestIsValid() throws Exception {
+        CreateUserRequest expectedRequest = CreateUserRequest.builder()
                 .password("test123")
                 .name("James")
-                .countryId(1L)
                 .build();
-        when(createCustomerUseCase.createCustomer(expectedRequest))
-                .thenReturn(CreateCustomerResponse.builder()
-                        .customerId(200L)
+        when(createUserUseCase.createUser(expectedRequest))
+                .thenReturn(CreateUserResponse.builder()
+                        .UserId(200L)
                         .build());
 
-        mockMvc.perform(post("/customers")
+        mockMvc.perform(post("/Users")
                         .contentType(APPLICATION_JSON_VALUE)
                         .content("""
                                 {
                                     "name": "James",
-                                    "password": "test123",
-                                    "countryId": "1"
+                                    "password": "test123"
                                 }
                                 """))
                 .andDo(print())
                 .andExpect(status().isCreated())
                 .andExpect(content().json("""
-                            { "customerId":  200 }
+                            { "UserId":  200 }
                         """));
 
-        verify(createCustomerUseCase).createCustomer(expectedRequest);
+        verify(createUserUseCase).createUser(expectedRequest);
     }
 
     @Test
-    @WithMockUser(username = "10@fontys.nl", roles = {"CUSTOMER"})
-    void updateCustomer_shouldReturn204() throws Exception {
-        mockMvc.perform(put("/customers/100")
+    @WithMockUser(username = "10@fontys.nl", roles = {"User"})
+    void updateUser_shouldReturn204() throws Exception {
+        mockMvc.perform(put("/Users/100")
                         .contentType(APPLICATION_JSON_VALUE)
                         .content("""
                                 {
-                                    "name": "James",
-                                    "countryId": "1"
+                                    "name": "Daniel"
                                 }
                                 """))
                 .andDo(print())
                 .andExpect(status().isNoContent());
 
-        UpdateCustomerRequest expectedRequest = UpdateCustomerRequest.builder()
+        UpdateUserRequest expectedRequest = UpdateUserRequest.builder()
                 .id(100L)
-                .name("James")
-                .countryId(1L)
+                .name("Daniel")
                 .build();
-        verify(updateCustomerUseCase).updateCustomer(expectedRequest);
-    }
-
-    private Country getBrazilDTO() {
-        return Country.builder()
-                .id(1L)
-                .code("BR")
-                .name("Brazil")
-                .build();
+        verify(updateUserUseCase).updateUser(expectedRequest);
     }
 }

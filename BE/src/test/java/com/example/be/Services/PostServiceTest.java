@@ -97,7 +97,7 @@ class PostServiceTest {
                 .text("Bread")
                 .id(10)
                 .build();
-        when(getPostUseCase.getPost(10)).thenReturn(Optional.of(Post));
+        when(getPostUseCase.getPost(10)).thenReturn(Optional.of(post));
 
         mockMvc.perform(get("/Posts/10"))
                 .andDo(print())
@@ -126,9 +126,9 @@ class PostServiceTest {
     @WithMockUser(username = "10@fontys.nl", roles = {"CUSTOMER, MODERATOR"})
     void getAllPosts_shouldReturn200WithPostsList_WhenNoFilterProvided() throws Exception {
         GetAllPostsResponse responseDTO = GetAllPostsResponse.builder()
-                .Posts(List.of(
-                        Post.builder().id(1).title("Chair").description("wood made").price(50.50).build(),
-                        Post.builder().id(2).title("Table").description("glass made").price(100.00).build()
+                .posts(List.of(
+                        Post.builder().id(1).text("Chair").build(),
+                        Post.builder().id(2).text("Table").build()
                 ))
                 .build();
         GetAllPostsRequest request = GetAllPostsRequest.builder().build();
@@ -141,8 +141,8 @@ class PostServiceTest {
                 .andExpect(content().json("""
                             {
                                 "Posts":[
-                                    {"id":1, "title":"Chair", "price": 50.50, "description": "wood made"},
-                                    {"id":2, "title":"Table", "price": 100.00, "description": "glass made"}
+                                    {"id":1, "title":"Chair"},
+                                    {"id":2, "title":"Table"}
                                 ]
                             }
                         """));
@@ -153,7 +153,7 @@ class PostServiceTest {
 
     @Test
     @WithMockUser(username = "MODERATOR@fontys.nl", roles = {"MODERATOR"})
-    void deleteStudent_shouldReturn204() throws Exception {
+    void deletePost_shouldReturn204() throws Exception {
         mockMvc.perform(delete("/Posts/100"))
                 .andDo(print())
                 .andExpect(status().isNoContent());

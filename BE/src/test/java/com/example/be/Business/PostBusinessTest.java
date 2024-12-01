@@ -1,10 +1,10 @@
 package com.example.be.Business;
 
-import com.example.backend.Business.exception.ProductAlreadyExistsException;
-import com.example.backend.Business.impl.productUseCasesImpl.*;
-import com.example.backend.Domain.Product.*;
-import com.example.backend.Repository.ProductRepository;
-import com.example.backend.Repository.entity.ProductEntity;
+import com.example.be.Business.exception.PostAlreadyExistsException;
+import com.example.be.Business.postUseCases.impl.*;
+import com.example.be.Domain.Posts.*;
+import com.example.be.Repository.PostsRepository;
+import com.example.be.Repository.entity.PostEntity;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
@@ -28,229 +28,145 @@ import static org.mockito.Mockito.*;
 class PostBusinessTest {
 
     @Mock
-    private ProductRepository productRepository;
+    private PostsRepository postsRepository;
 
     @InjectMocks
-    private CreateProductUseCaseImpl createProductUseCase;
+    private CreatePostUseCaseImpl createPostUseCase;
 
     @InjectMocks
-    private DeleteProductUseCaseImpl deleteProductUseCase;
+    private DeletePostUseCaseImpl deletePostUseCase;
 
     @InjectMocks
-    private GetProductsUseCaseImpl getProductsUseCase;
+    private GetPostsUseCaseImpl getPostsUseCase;
 
     @InjectMocks
-    private GetProductUseCaseImpl getProductUseCase;
+    private GetPostUseCaseImpl getPostUseCase;
 
     @InjectMocks
-    private UpdateProductUseCaseImpl updateProductUseCase;
-
-    @InjectMocks
-    private GetProductsFilteredUseCaseImpl getProductsFilteredUseCase;
+    private UpdatePostUseCaseImpl updatePostUseCase;
 
     @Test
-    public void testCreateProduct_Success() {
+    public void testCreatePost_Success() {
         // Arrange
-        CreateProductRequest request = new CreateProductRequest();
-        request.setTitle("New Product");
-        request.setPrice(19.99);
-        request.setDescription("This is a test product.");
+        CreatePostRequest request = new CreatePostRequest();
+        request.setText("New Post");
 
-        ProductEntity savedProduct = new ProductEntity();
-        savedProduct.setId(1); // Assuming the ID type is Integer
-        savedProduct.setTitle("New Product");
-        savedProduct.setPrice(19.99);
-        savedProduct.setDescription("This is a test product.");
+        PostEntity savedPost = new PostEntity();
+        savedPost.setId(1); // Assuming the ID type is Integer
+        savedPost.setText("New Post");
 
-        when(productRepository.save(any(ProductEntity.class))).thenReturn(savedProduct);
+        when(postsRepository.save(any(PostEntity.class))).thenReturn(savedPost);
 
         // Act
-        CreateProductResponse response = createProductUseCase.createProduct(request);
+        CreatePostResponse response = createPostUseCase.createPost(request);
 
         // Assert
         assertNotNull(response);
-        assertEquals(1, response.getProductId());
-        verify(productRepository).save(any(ProductEntity.class));
+        assertEquals(1, response.getId());
+        verify(postsRepository).save(any(PostEntity.class));
     }
 
     @Test
-    public void testDeleteProduct_Success() {
+    public void testDeletePost_Success() {
         // Arrange
-        long productId = 1L;
-        when(productRepository.existsById(productId)).thenReturn(true);
+        long PostId = 1L;
+        when(postsRepository.existsById(PostId)).thenReturn(true);
 
         // Act
-        deleteProductUseCase.deleteProduct(productId);
+        deletePostUseCase.deletePost(PostId);
 
         // Assert
-        verify(productRepository, times(1)).deleteById(productId);
+        verify(postsRepository, times(1)).deleteById(PostId);
     }
 
     @Test
-    public void testGetProducts_Success() {
+    public void testGetPosts_Success() {
         // Arrange
-        GetAllProductsRequest request = new GetAllProductsRequest();
+        GetAllPostsRequest request = new GetAllPostsRequest();
 
-        ProductEntity productEntity1 = new ProductEntity();
-        productEntity1.setId(1);
-        productEntity1.setTitle("Product 1");
-        productEntity1.setPrice(9.99);
-        productEntity1.setDescription("Description 1");
+        PostEntity PostEntity1 = new PostEntity();
+        PostEntity1.setId(1);
+        PostEntity1.setText("Post 1");
 
-        ProductEntity productEntity2 = new ProductEntity();
-        productEntity2.setId(2);
-        productEntity2.setTitle("Product 2");
-        productEntity2.setPrice(19.99);
-        productEntity2.setDescription("Description 2");
+        PostEntity PostEntity2 = new PostEntity();
+        PostEntity2.setId(2);
+        PostEntity2.setText("Post 2");
 
-        List<ProductEntity> productEntities = Arrays.asList(productEntity1, productEntity2);
-        when(productRepository.findAll()).thenReturn(productEntities);
+        List<PostEntity> PostEntities = Arrays.asList(PostEntity1, PostEntity2);
+        when(postsRepository.findAll()).thenReturn(PostEntities);
 
         // Actp
-        GetAllProductsResponse response = getProductsUseCase.getProducts(request);
+        GetAllPostsResponse response = getPostsUseCase.getPosts(request);
 
         // Assert
         assertNotNull(response);
-        assertNotNull(response.getProducts());
-        assertEquals(2, response.getProducts().size());
+        assertNotNull(response.getPosts());
+        assertEquals(2, response.getPosts().size());
 
-        Product product1 = response.getProducts().get(0);
-        assertEquals(1, product1.getId());
-        assertEquals("Product 1", product1.getTitle());
-        assertEquals(9.99, product1.getPrice());
-        assertEquals("Description 1", product1.getDescription());
+        Post Post1 = response.getPosts().get(0);
+        assertEquals(1, Post1.getId());
+        assertEquals("Post 1", Post1.getText());
 
-        Product product2 = response.getProducts().get(1);
-        assertEquals(2, product2.getId());
-        assertEquals("Product 2", product2.getTitle());
-        assertEquals(19.99, product2.getPrice());
-        assertEquals("Description 2", product2.getDescription());
+        Post Post2 = response.getPosts().get(1);
+        assertEquals(2, Post2.getId());
+        assertEquals("Post 2", Post2.getText());
     }
 
     @Test
-    public void testGetProduct_Success() {
+    public void testGetPost_Success() {
         // Arrange
-        int productId = 1;
-        ProductEntity productEntity = new ProductEntity();
-        productEntity.setId(productId);
-        productEntity.setTitle("Test Product");
-        productEntity.setPrice(29.99);
-        productEntity.setDescription("Test Description");
+        int PostId = 1;
+        PostEntity PostEntity = new PostEntity();
+        PostEntity.setId(PostId);
+        PostEntity.setText("Test Post");
 
-        when(productRepository.findById((long)productId)).thenReturn(Optional.of(productEntity));
+        when(postsRepository.findById((long)PostId)).thenReturn(Optional.of(PostEntity));
 
         // Act
-        Optional<Product> productOptional = getProductUseCase.getProduct(productId);
+        Optional<Post> PostOptional = getPostUseCase.getPost(PostId);
 
         // Assert
-        assertTrue(productOptional.isPresent());
-        Product product = productOptional.get();
-        assertEquals(productId, product.getId());
-        assertEquals("Test Product", product.getTitle());
-        assertEquals(29.99, product.getPrice());
-        assertEquals("Test Description", product.getDescription());
+        assertTrue(PostOptional.isPresent());
+        Post Post = PostOptional.get();
+        assertEquals(PostId, Post.getId());
+        assertEquals("Test Post", Post.getText());
     }
 
     @Test
-    public void testUpdateProduct_Success() {
+    public void testUpdatePost_Success() {
         // Arrange
-        long productId = 1L;
-        UpdateProductRequest request = new UpdateProductRequest();
-        request.setId(productId);
-        request.setTitle("Updated Title");
-        request.setPrice(39.99);
-        request.setDescription("Updated Description");
+        long PostId = 1L;
+        UpdatePostRequest request = new UpdatePostRequest();
+        request.setId(PostId);
+        request.setText("Updated Title");
 
-        ProductEntity productEntity = new ProductEntity();
-        productEntity.setId((int)productId);
-        productEntity.setTitle("Original Title");
-        productEntity.setPrice(29.99);
-        productEntity.setDescription("Original Description");
+        PostEntity PostEntity = new PostEntity();
+        PostEntity.setId((int)PostId);
+        PostEntity.setText("Original Title");
 
-        when(productRepository.findById(productId)).thenReturn(Optional.of(productEntity));
+        when(postsRepository.findById(PostId)).thenReturn(Optional.of(PostEntity));
 
         // Act
-        updateProductUseCase.updateProduct(request);
+        updatePostUseCase.updatePost(request);
 
         // Assert
-        verify(productRepository).save(productEntity);
-        verify(productRepository).findById(productId);
+        verify(postsRepository).save(PostEntity);
+        verify(postsRepository).findById(PostId);
     }
 
     @Test
-    public void testUpdateProduct_NotFound() {
+    public void testUpdatePost_NotFound() {
         // Arrange
-        long productId = 2L;
-        UpdateProductRequest request = new UpdateProductRequest();
-        request.setId(productId);
-        request.setTitle("Non-existent Product");
-        request.setPrice(19.99);
-        request.setDescription("This product does not exist.");
+        long PostId = 2L;
+        UpdatePostRequest request = new UpdatePostRequest();
+        request.setId(PostId);
+        request.setText("Non-existent Post");
 
-        when(productRepository.findById(productId)).thenReturn(Optional.empty());
+        when(postsRepository.findById(PostId)).thenReturn(Optional.empty());
 
         // Act & Assert
-        assertThrows(ProductAlreadyExistsException.class, () -> {
-            updateProductUseCase.updateProduct(request);
+        assertThrows(PostAlreadyExistsException.class, () -> {
+            updatePostUseCase.updatePost(request);
         });
-    }
-
-    @Test
-    void getProductsFiltered_WhenSortIsAscending_ShouldReturnProductsInAscendingOrder() {
-        // Arrange
-        GetAllProductsFilteredRequest request = GetAllProductsFilteredRequest.builder()
-                .minPrice(new BigDecimal("10.00"))
-                .sort("ASC")
-                .build();
-        List<ProductEntity> mockedResult = Arrays.asList(
-                ProductEntity.builder().id(1).title("Product A").price(10.00).description("Description A").build(),
-                ProductEntity.builder().id(2).title("Product B").price(15.00).description("Description B").build()
-        );
-
-        when(productRepository.findProductsPricedAboveWithAscending(request.getMinPrice())).thenReturn(mockedResult);
-
-        // Act
-        GetAllProductsFilteredResponse response = getProductsFilteredUseCase.getProductsFiltered(request);
-
-        // Assert
-        assertEquals(2, response.getProducts().size());
-        assertEquals(10.00, response.getProducts().get(0).getPrice(), 0.01);
-        assertEquals(15.00, response.getProducts().get(1).getPrice(), 0.01);
-    }
-
-    @Test
-    void getProductsFiltered_WhenSortIsDescending_ShouldReturnProductsInDescendingOrder() {
-        // Arrange
-        GetAllProductsFilteredRequest request = GetAllProductsFilteredRequest.builder()
-                .minPrice(new BigDecimal("10.00"))
-                .sort("DESC")
-                .build();
-        List<ProductEntity> mockedResult = Arrays.asList(
-                ProductEntity.builder().id(2).title("Product B").price(15.00).description("Description B").build(),
-                ProductEntity.builder().id(1).title("Product A").price(10.00).description("Description A").build()
-        );
-
-        when(productRepository.findProductsPricedAboveWithDescending(request.getMinPrice())).thenReturn(mockedResult);
-
-        // Act
-        GetAllProductsFilteredResponse response = getProductsFilteredUseCase.getProductsFiltered(request);
-
-        // Assert
-        assertEquals(2, response.getProducts().size());
-        assertEquals(15.00, response.getProducts().get(0).getPrice(), 0.01);
-        assertEquals(10.00, response.getProducts().get(1).getPrice(), 0.01);
-    }
-
-    @Test
-    void getProductsFiltered_InvalidSortDirection_ThrowsIllegalArgumentException() {
-        // Arrange
-        GetAllProductsFilteredRequest request = new GetAllProductsFilteredRequest();
-        request.setSort("INVALID");
-        request.setMinPrice(BigDecimal.valueOf(100));
-
-        // Act & Assert
-        assertThrows(IllegalArgumentException.class, () -> getProductsFilteredUseCase.getProductsFiltered(request));
-        verify(productRepository, never()).findProductsPricedAboveWithAscending(any(BigDecimal.class));
-        verify(productRepository, never()).findProductsPricedAboveWithDescending(any(BigDecimal.class));
     }
 }
