@@ -3,8 +3,12 @@ package com.example.be.Business;
 import com.example.be.Business.exception.PostAlreadyExistsException;
 import com.example.be.Business.postUseCases.impl.*;
 import com.example.be.Domain.Posts.*;
+import com.example.be.Repository.LikeRepository;
 import com.example.be.Repository.PostsRepository;
+import com.example.be.Repository.UserRepository;
+import com.example.be.Repository.entity.LikeEntity;
 import com.example.be.Repository.entity.PostEntity;
+import com.example.be.Repository.entity.UserEntity;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
@@ -13,7 +17,6 @@ import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMock
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
 
-import java.math.BigDecimal;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Optional;
@@ -28,7 +31,16 @@ import static org.mockito.Mockito.*;
 class PostBusinessTest {
 
     @Mock
+    private UserRepository userRepository;
+
+    @Mock
     private PostsRepository postsRepository;
+
+    @Mock
+    private LikeRepository likeRepository;
+
+    @InjectMocks
+    private LikePostUseCaseImpl likePostUseCase;
 
     @InjectMocks
     private CreatePostUseCaseImpl createPostUseCase;
@@ -168,5 +180,70 @@ class PostBusinessTest {
         assertThrows(PostAlreadyExistsException.class, () -> {
             updatePostUseCase.updatePost(request);
         });
+    }
+
+    @Test
+    void likePost_UserAndPostExist_Success() {
+        // Arrange
+        Long userId = 1L;
+        int postId = 1;  // postId is now int
+        long longpostId = postId;
+
+        UserEntity user = UserEntity.builder().id(userId).username("JohnDoe").build();
+        PostEntity post = PostEntity.builder().id(postId).text("Sample Post").build();
+
+        when(userRepository.findById(userId)).thenReturn(Optional.of(user));
+        when(postsRepository.findById(longpostId)).thenReturn(Optional.of(post));
+        when(likeRepository.countByPostId(longpostId)).thenReturn(10L);
+
+        // Act
+        Long likeCount = likePostUseCase.likePost(userId, longpostId);
+
+        // Assert
+        assertEquals(10L, likeCount);
+        verify(userRepository).findById(userId);
+        verify(postsRepository).findById(longpostId);
+        verify(likeRepository).save(any(LikeEntity.class));
+        verify(likeRepository).countByPostId(longpostId);
+    }
+
+    @Test
+    void likePost_UserDoesNotExist_ThrowsException() {
+        // Arrange
+        Long userId = 1L;
+        int postId = 1;
+        long longpostId = postId;
+
+        when(userRepository.findById(userId)).thenReturn(Optional.empty());
+
+        // Act & Assert
+        Exception exception = assertThrows(IllegalArgumentException.class,
+                () -> likePostUseCase.likePost(userId, longpostId));
+
+        assertEquals("User not found", exception.getMessage());
+        verify(userRepository).findById(userId);
+        verify(postsRepository, never()).findById(any());
+        verify(likeRepository, never()).save(any());
+    }
+
+    @Test
+    void likePost_PostDoesNotExist_ThrowsException() {
+        // Arrange
+        Long userId = 1L;
+        int postId = 1;
+        long longpostId = postId;
+
+        UserEntity user = UserEntity.builder().id(userId).username("JohnDoe").build();
+        when(userRepository.findById(userId)).thenReturn(Optional.of(user));
+        when(postsRepository.findById(longpostId)).thenReturn(Optional.empty());
+
+        // Act & Assert
+        Exception exception = assertThrows(IllegalArgumentException.class,
+                () -> likePostUseCase.likePost(userId, longpostId));
+
+        assertEquals("Post not found", exception.getMessage());
+        verify(userRepository).findById(userId);
+        verify(postsRepository).findById(longpostId);
+        verify(likeRepository, never()).save(any());
     }
 }
