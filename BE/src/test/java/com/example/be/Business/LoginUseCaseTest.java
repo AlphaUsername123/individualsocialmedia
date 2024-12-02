@@ -28,6 +28,8 @@ import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.mockito.Mockito.*;
 
 @ExtendWith(SpringExtension.class)
+@SpringBootTest
+@AutoConfigureMockMvc
 class LoginUseCaseTest {
 
     @Mock
@@ -42,13 +44,8 @@ class LoginUseCaseTest {
     @InjectMocks
     private LoginUseCaseImpl loginUseCase;
 
-    @BeforeEach
-    void setUp() {
-        MockitoAnnotations.openMocks(this);
-    }
-
     @Test
-    void testLoginSuccess() {
+    public void testLoginSuccess() {
         // Arrange
         LoginRequest loginRequest = new LoginRequest("username", "password");
         UserEntity user = mock(UserEntity.class);
@@ -79,7 +76,7 @@ class LoginUseCaseTest {
 
 
     @Test
-    void testLoginUserNotFound() {
+    public void testLoginUserNotFound() {
         // Arrange
         LoginRequest loginRequest = new LoginRequest("username", "password");
         when(userRepository.findByUsername(loginRequest.getUsername())).thenReturn(null);
@@ -90,7 +87,7 @@ class LoginUseCaseTest {
     }
 
     @Test
-    void testLoginInvalidPassword() {
+    public void testLoginInvalidPassword() {
         // Arrange
         LoginRequest loginRequest = new LoginRequest("username", "password");
         UserEntity user = mock(UserEntity.class);
@@ -104,7 +101,7 @@ class LoginUseCaseTest {
     }
 
     @Test
-    void testLoginSuccessWithUser() {
+    public void testLoginSuccessWithUser() {
         // Arrange
         LoginRequest loginRequest = new LoginRequest("username", "password");
         UserEntity user = mock(UserEntity.class);
@@ -134,7 +131,7 @@ class LoginUseCaseTest {
     }
 
     @Test
-    void testLoginSuccessWithoutUser() {
+    public void testLoginSuccessWithoutUser() {
         // Arrange
         LoginRequest loginRequest = new LoginRequest("username", "password");
         UserEntity user = mock(UserEntity.class);
