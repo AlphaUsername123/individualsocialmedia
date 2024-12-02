@@ -28,21 +28,18 @@ public class CreateUserUseCaseImpl implements CreateUserUseCase {
     @Override
     public CreateUserResponse createUser(CreateUserRequest request) {
 
-        UserEntity savedUser= saveNewUser(request);
-
-        saveNewUser(savedUser, request.getPassword());
+        UserEntity savedUser = saveNewUser(request);
 
         return CreateUserResponse.builder()
                 .UserId(savedUser.getId())
                 .build();
     }
 
-    private void saveNewUser(UserEntity user, String password) {
-        // TODO: uncomment lines below
-        String encodedPassword = passwordEncoder.encode(password);
+    private UserEntity saveNewUser(CreateUserRequest request) {
+        String encodedPassword = passwordEncoder.encode(request.getPassword());
 
         UserEntity newUser = UserEntity.builder()
-                .username(user.getUsername().toString() + USERNAME_SUFFIX)
+                .username(request.getName().toString() + USERNAME_SUFFIX)
                 .password(encodedPassword)
                 .build();
 
@@ -51,13 +48,6 @@ public class CreateUserUseCaseImpl implements CreateUserUseCase {
                         .user(newUser)
                         .role(RoleEnum.USER)
                         .build()));
-        userRepository.save(newUser);
-    }
-
-    private UserEntity saveNewUser(CreateUserRequest request) {
-        UserEntity newUser = UserEntity.builder()
-                .username(request.getName())
-                .build();
-        return newUser;
+       return userRepository.save(newUser);
     }
 }

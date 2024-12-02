@@ -47,7 +47,7 @@ class UserBusinessTest {
         // Arrange
         CreateUserRequest request = CreateUserRequest.builder()
                 .name("John Doe")
-                .password("password") // Assuming password is provided
+                .password("password")
                 .build();
 
         UserEntity userEntity = UserEntity.builder()
@@ -55,7 +55,7 @@ class UserBusinessTest {
                 .username("John Doe")
                 .build();
 
-        String encodedPassword = "encodedPassword"; // Mocked encoded password
+        String encodedPassword = "encodedPassword";
 
         when(userRepository.save(any(UserEntity.class))).thenReturn(userEntity);
         when(passwordEncoder.encode(request.getPassword())).thenReturn(encodedPassword);
@@ -65,7 +65,6 @@ class UserBusinessTest {
 
         // Assert
         assertEquals(1L, response.getUserId());
-        verify(userRepository).save(any(UserEntity.class));
         verify(userRepository).save(any(UserEntity.class));
     }
 
