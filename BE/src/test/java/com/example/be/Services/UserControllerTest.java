@@ -56,7 +56,7 @@ class UserControllerTest {
                 .andExpect(status().isOk())
                 .andExpect(header().string("Content-Type", APPLICATION_JSON_VALUE))
                 .andExpect(content().json("""
-                           {"id":10, "username":"Rivaldo Vítor Borba Ferreira"}
+                           {"id":10, "name":"Rivaldo Vítor Borba Ferreira"}
                         """));
 
         verify(getUserUseCase).getUser(10L);
@@ -76,7 +76,7 @@ class UserControllerTest {
 
     @Test
     @WithMockUser(username = "MODERATOR@fontys.nl", roles = {"MODERATOR"})
-    void getAllUsers_shouldReturn200WithUsersList_WhenNoFilterProvided() throws Exception {
+    void getAllUsers_shouldReturn200WithUsersList() throws Exception {
         GetAllUsersResponse responseDTO = GetAllUsersResponse.builder()
                 .Users(List.of(
                         User.builder().id(1L).name("Romario").build(),
@@ -92,7 +92,7 @@ class UserControllerTest {
                 .andExpect(header().string("Content-Type", APPLICATION_JSON_VALUE))
                 .andExpect(content().json("""
                             {
-                                "Users":[
+                                "users":[
                                     {"id":1, "name":"Romario"},
                                     {"id":1, "name":"Ronaldo"}
                                 ]
@@ -135,7 +135,7 @@ class UserControllerTest {
                 .andDo(print())
                 .andExpect(status().isCreated())
                 .andExpect(content().json("""
-                            { "UserId":  200 }
+                            { "userId":  200 }
                         """));
 
         verify(createUserUseCase).createUser(expectedRequest);

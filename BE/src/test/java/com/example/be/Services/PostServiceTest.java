@@ -56,7 +56,7 @@ class PostServiceTest {
                         .id(1)
                         .build());
 
-        mockMvc.perform(post("/Posts")
+        mockMvc.perform(post("/posts")
                         .contentType(APPLICATION_JSON_VALUE)
                         .content("""
                                 {
@@ -73,8 +73,9 @@ class PostServiceTest {
     }
 
     @Test
+    @WithMockUser(username = "10@fontys.nl")
     void updatePost_shouldReturn204() throws Exception {
-        mockMvc.perform(put("/Posts/1")
+        mockMvc.perform(put("/posts/1")
                         .contentType(APPLICATION_JSON_VALUE)
                         .content("""
                                 {
@@ -92,6 +93,7 @@ class PostServiceTest {
     }
 
     @Test
+    @WithMockUser(username = "10@fontys.nl")
     void getPost_shouldReturn200WithPost_whenPostFound() throws Exception {
         Post post = Post.builder()
                 .text("Bread")
@@ -99,7 +101,7 @@ class PostServiceTest {
                 .build();
         when(getPostUseCase.getPost(10)).thenReturn(Optional.of(post));
 
-        mockMvc.perform(get("/Posts/10"))
+        mockMvc.perform(get("/posts/10"))
                 .andDo(print())
                 .andExpect(status().isOk())
                 .andExpect(header().string("Content-Type", APPLICATION_JSON_VALUE))
@@ -115,7 +117,7 @@ class PostServiceTest {
     void getPost_shouldReturn404Error_whenPostNotFound() throws Exception {
         when(getPostUseCase.getPost(10)).thenReturn(Optional.empty());
 
-        mockMvc.perform(get("/Posts/10"))
+        mockMvc.perform(get("/posts/10"))
                 .andDo(print())
                 .andExpect(status().isNotFound());
 
@@ -123,7 +125,7 @@ class PostServiceTest {
     }
 
     @Test
-    @WithMockUser(username = "10@fontys.nl", roles = {"CUSTOMER, MODERATOR"})
+    @WithMockUser(username = "10@fontys.nl")
     void getAllPosts_shouldReturn200WithPostsList_WhenNoFilterProvided() throws Exception {
         GetAllPostsResponse responseDTO = GetAllPostsResponse.builder()
                 .posts(List.of(
@@ -134,15 +136,15 @@ class PostServiceTest {
         GetAllPostsRequest request = GetAllPostsRequest.builder().build();
         when(getPostsUseCase.getPosts(request)).thenReturn(responseDTO);
 
-        mockMvc.perform(get("/Posts/getall"))
+        mockMvc.perform(get("/posts/getall"))
                 .andDo(print())
                 .andExpect(status().isOk())
                 .andExpect(header().string("Content-Type", APPLICATION_JSON_VALUE))
                 .andExpect(content().json("""
                             {
-                                "Posts":[
-                                    {"id":1, "title":"Chair"},
-                                    {"id":2, "title":"Table"}
+                                "posts":[
+                                    {"id":1, "text":"Chair"},
+                                    {"id":2, "text":"Table"}
                                 ]
                             }
                         """));
@@ -154,7 +156,7 @@ class PostServiceTest {
     @Test
     @WithMockUser(username = "MODERATOR@fontys.nl", roles = {"MODERATOR"})
     void deletePost_shouldReturn204() throws Exception {
-        mockMvc.perform(delete("/Posts/100"))
+        mockMvc.perform(delete("/posts/100"))
                 .andDo(print())
                 .andExpect(status().isNoContent());
 
