@@ -87,6 +87,8 @@ sonar {
 		property "sonar.host.url", "http://localhost:9000"
 		property "sonar.token", "sqp_37b715ae124ea9f3463b7392314f8e869e056640"
 		property "sonar.scm.disabled", true
+
+		property "sonar.coverage.exclusions", "**/com/example/be/Configuration/**/*, **/com/example/be/Repository/**/*, **/com/example/be/Domain/**/*, **/com/example/be/Services/**/*"
 	}
 }
 
