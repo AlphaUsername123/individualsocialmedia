@@ -8,12 +8,17 @@ import TokenManager from "../api/TokenManager.tsx";
 function PostUpdate() {
     const [formData, setFormData] = useState({
         id: '',
-        text: ''
+        text: '',
+        userId: '',
+        createdAt: '',
     });
-    const [isAdmin, setIsAdmin] = useState(false); // default to false
+    const [isModerator, setIsModerator] = useState(false); // default to false
 
     const {PostId} = useParams();
     const navigate = useNavigate();
+
+    const token = localStorage.getItem("accessToken");
+    TokenManager.setAccessToken(token);
 
     useEffect(() => {
         PostAPI.getPostById(PostId)
@@ -23,7 +28,7 @@ function PostUpdate() {
                 const {text} = response;
                 setFormData({
                     ...formData,
-                    text
+                    text,
                 });
             })
             .catch((error) => {
@@ -34,16 +39,20 @@ function PostUpdate() {
     const handleFormSubmit = async (e) => {
         e.preventDefault();
         try {
+            formData.userId = TokenManager.getClaims().UserId; // Ensure `userId` is correctly fetched
+            formData.createdAt = new Date().toISOString();
+
             formData.id = PostId;
+            console.log(formData);
             await PostAPI.updatePost(formData);
             TokenManager.setAccessToken(localStorage.getItem('accessToken'));
-            if (TokenManager.getClaims().roles != "ADMIN") {
-                setIsAdmin(false);
+            if (TokenManager.getClaims().roles != "MODERATOR") {
+                setIsModerator(false);
             }
-            if (isAdmin == true) {
-                navigate("/adminpage");
+            if (isModerator == true) {
+                navigate("/moderatorpage");
             }
-            else if (isAdmin != true) {
+            else if (!isModerator) {
                 navigate("/userpage");
             }
             window.location.reload();

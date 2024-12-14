@@ -1,16 +1,15 @@
 import React from 'react';
-import NavBar from "../../components/Admin/NavBar.tsx";
-import Footer from "../../components/Admin/Footer.tsx";
+import NavBar from "../../components/Moderator/NavBar.tsx";
+import Footer from "../../components/Moderator/Footer.tsx";
 import '../CSS/ViewPage.css';
-import PostsData from "../../components/PostsData.tsx";
-import PostsDataAdmin from "../../components/PostsDataAdmin.tsx";
+import PostsDataModerator from "../../components/PostsDataModerator.tsx";
 
 const ViewPage = () => {
     return (
         <div className="app-container">
             <NavBar/>
             <div className="content">
-                <PostsDataAdmin/>
+                <PostsDataModerator/>
             </div>
             <Footer/>
         </div>

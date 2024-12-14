@@ -14,11 +14,11 @@ const NavBar: React.FC = () => {
     return (
         <Navbar bg="light" expand="lg" >
             <Container fluid>
-                <Navbar.Brand href="/adminpage">Admin Dashboard</Navbar.Brand>
+                <Navbar.Brand href="/moderatorpage">Moderator Dashboard</Navbar.Brand>
                 <Navbar.Toggle aria-controls="basic-navbar-nav"/>
                 <Navbar.Collapse id="basic-navbar-nav">
                     <Nav className="me-auto">
-                        <Nav.Link href="/adminpage">Home</Nav.Link>
+                        <Nav.Link href="/moderatorpage">Home</Nav.Link>
                         <Nav.Link href="/websocket">Live Chat</Nav.Link>
                         {/*<Nav.Link href="/productpost">Add Post</Nav.Link>*/}
                         <Nav.Link className='header-right' href="/userpage">User Page</Nav.Link>

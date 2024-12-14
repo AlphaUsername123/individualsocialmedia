@@ -51,7 +51,7 @@ const ProtectedRoute = ({children}) => {
     console.log('is authentif: ', isNotAuthenticated());
     TokenManager.setAccessToken(localStorage.getItem('accessToken'));
     console.log(TokenManager.getClaims().roles);
-     if(TokenManager.getClaims().roles != "ADMIN")
+     if(TokenManager.getClaims().roles != "MODERATOR")
     {
         return window.location.assign('/noaccess');
     }

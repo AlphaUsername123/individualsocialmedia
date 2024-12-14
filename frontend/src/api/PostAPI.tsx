@@ -78,8 +78,8 @@ const PostAPI = {
                 // Handle the case where the token is not available (e.g., redirect to login)
                 return null; // or throw an error, or handle as appropriate
             }
-
-            const response = await axios.post(`http://localhost:8080/posts`, post,{
+            console.log(post);
+            const response = await axios.post(`http://localhost:8080/posts`, post, {
                 headers: {
                     Authorization: `Bearer ${token}`
                 }
@@ -111,7 +111,33 @@ const PostAPI = {
             console.error('Error fetching product data:', error);
             throw error; // Propagate the error for further handling
         }
-    }
+    },
+
+    likePost: async (postId, userId) => {
+        try {
+            const token = await retrieveAccessToken();
+            if (!token) {
+                console.error('Access token not available');
+                // Handle the case where the token is not available (e.g., redirect to login)
+                return null; // or throw an error, or handle as appropriate
+            }
+
+            console.log(userId, postId)
+            const response = await axios.post(`http://localhost:8080/posts/${postId}/like`, { // sending userId in the request body
+                    userId
+                },
+                {
+                    headers: {
+                        Authorization: `Bearer ${token}`,
+                        'Content-Type': 'application/json'
+                    }
+                });
+            return response.data.likeCount; // Return the updated like count from the response
+        } catch (error) {
+            console.error("Error liking the post:", error);
+            throw error; // Propagate the error to be handled by the calling function
+        }
+    },
 }
 
 export default PostAPI;

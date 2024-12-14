@@ -12,6 +12,7 @@ import org.springframework.context.event.EventListener;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Component;
 
+import java.time.LocalDateTime;
 import java.util.Set;
 
 @Component
@@ -29,7 +30,7 @@ public class DatabaseDummyDataInitializer {
         if (isDatabaseEmpty()) {
             insertMODERATORUser();
             insertUser();
-            insertProducts();
+//            insertProducts();
         }
     }
 
@@ -55,22 +56,22 @@ public class DatabaseDummyDataInitializer {
         createUserUseCase.createUser(createUserRequest);
     }
 
-    private void insertProducts()
-    {
-        PostEntity post = PostEntity.builder()
-                .text("Milk")
-                .build();
-
-        PostEntity post1 = PostEntity.builder()
-                .text("something")
-                .build();
-
-        PostEntity post2 = PostEntity.builder()
-                .text("lol")
-                .build();
-
-        postsRepository.save(post);
-        postsRepository.save(post1);
-        postsRepository.save(post2);
-    }
+//    private void insertProducts()
+//    {
+//        PostEntity post = PostEntity.builder()
+//                .text("Milk")
+//                .build();
+//
+//        PostEntity post1 = PostEntity.builder()
+//                .text("something")
+//                .build();
+//
+//        PostEntity post2 = PostEntity.builder()
+//                .text("lol")
+//                .build();
+//
+//        postsRepository.save(post);
+//        postsRepository.save(post1);
+//        postsRepository.save(post2);
+//    }
 }

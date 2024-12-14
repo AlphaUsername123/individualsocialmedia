@@ -1,7 +1,7 @@
 import {useState} from 'react';
 import {useNavigate} from 'react-router-dom';
-import AuthService from "../services/AuthService.tsx";
 import TokenManager from "../api/TokenManager.tsx";
+import AuthAPI from "../api/AuthServiceAPI.tsx";
 
 const LoginComponent = () => {
     const navigate = useNavigate();
@@ -20,13 +20,13 @@ const LoginComponent = () => {
         try {
             setState({...state, error: ''}); // Clear previous error messages
             const {username, password} = state;
-            const {success, token, message} = await AuthService.login(username, password);
+            const {success, token, message} = await AuthAPI.login(username, password);
             TokenManager.setAccessToken(token);
             if (success) {
                 setState({...state, token});
                 // window.location.assign('http://localhost:5173/lol');
-                if(TokenManager.getClaims().roles == "ADMIN") {
-                    navigate('/adminpage');
+                if(TokenManager.getClaims().roles == "MODERATOR") {
+                    navigate('/moderatorpage');
                 }
                 else
                 {

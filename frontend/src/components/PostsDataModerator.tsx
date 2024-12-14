@@ -1,12 +1,10 @@
 import React, {useEffect, useState} from 'react';
 import {Card, Button} from 'react-bootstrap';
-import {useNavigate} from 'react-router-dom';
 import PropTypes from 'prop-types';
 import PostAPI from "../api/PostAPI.tsx";
 
-function PostsDataAdmin() {
+function PostsDataModerator() {
     const [data, setData] = useState([]);
-    const navigate = useNavigate();
 
     useEffect(() => {
         PostAPI.getPosts()
@@ -61,4 +59,4 @@ PostCard.propTypes = {
     onDeletePostDetails: PropTypes.func.isRequired
 };
 
-export default PostsDataAdmin;
+export default PostsDataModerator;

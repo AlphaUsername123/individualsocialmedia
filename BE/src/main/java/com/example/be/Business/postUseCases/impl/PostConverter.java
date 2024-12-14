@@ -11,6 +11,8 @@ public class PostConverter {
         return Post.builder()
                 .id(post.getId())
                 .text(post.getText())
+                .username(post.getUser().getUsername())
+                .createdAt(post.getCreatedAt())
                 .build();
     }
 }

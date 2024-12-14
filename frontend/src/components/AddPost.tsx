@@ -1,34 +1,49 @@
-import React, {useState} from 'react';
-import {useNavigate} from "react-router-dom";
+import React, { useState } from 'react';
+import { useNavigate } from "react-router-dom";
 import PostAPI from "../api/PostAPI.tsx";
 import NavBarUser from "./User/NavBarUser.tsx";
+import TokenManager from "../api/TokenManager.tsx";
 
 const AddPost = () => {
     const [formData, setFormData] = useState({
-        text: ''
+        text: '',
     });
 
     const navigate = useNavigate();
+    const token = localStorage.getItem("accessToken");
+    TokenManager.setAccessToken(token);
 
     const handleFormSubmit = async (e) => {
         e.preventDefault();
-        // Handle form submission with formData
-        console.log(formData);
-        await PostAPI.postThePost(formData);
-        navigate("/userpage");
-        window.location.reload();
+        const userId = TokenManager.getClaims().UserId; // Ensure `userId` is correctly fetched
+        const createdAt = new Date().toISOString();
+
+        const dataToSubmit = {
+            ...formData,
+            userId,
+            createdAt,
+        };
+
+        console.log(dataToSubmit);
+
+        try {
+            await PostAPI.postThePost(dataToSubmit);
+            navigate("/userpage");
+        } catch (error) {
+            console.error("Failed to submit post:", error);
+        }
     };
 
     return (
         <form onSubmit={handleFormSubmit}>
-            <NavBarUser/>
+            <NavBarUser />
             <label>
                 Text:
                 <input
                     type="text"
-                    name="Text"
+                    name="text"
                     value={formData.text}
-                    onChange={(e) => setFormData({...formData, text: e.target.value})}
+                    onChange={(e) => setFormData({ ...formData, text: e.target.value })}
                 />
             </label>
 
@@ -36,4 +51,5 @@ const AddPost = () => {
         </form>
     );
 };
+
 export default AddPost;

@@ -21,6 +21,7 @@ const NavBarUser: React.FC = () => {
                         <Nav.Link href="/userpage">Home</Nav.Link>
                         <Nav.Link href="/websocket">Live Chat</Nav.Link>
                         <Nav.Link href="/addpost">Add Post</Nav.Link>
+                        <Nav.Link href="/myposts">My Posts</Nav.Link>
                     </Nav>
                 </Navbar.Collapse>
                 <button onClick={handleLogout} className='header-right'>logout</button>

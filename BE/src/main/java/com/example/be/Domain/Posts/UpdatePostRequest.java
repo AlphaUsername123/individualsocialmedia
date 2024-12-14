@@ -7,6 +7,8 @@ import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
+import java.time.LocalDateTime;
+
 @Data
 @Builder
 @NoArgsConstructor
@@ -15,4 +17,8 @@ public class UpdatePostRequest {
     private Long id;
     @NotBlank
     private String text;
+    @NotNull
+    private Long userId;
+    @NotNull
+    private LocalDateTime createdAt;
 }
